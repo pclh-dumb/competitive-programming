@@ -17,7 +17,7 @@ Node* cat(Node* cur, int data) { // insert to right
         cur->next->prev = tmp;
     }
     else {
-        tail = cur->next;
+        tail = tmp;
     }
 
     tmp->prev = cur;
@@ -46,13 +46,16 @@ void rm(Node* cur) {
     if(cur->prev == nullptr) {
         root = cur->next;
         cur->next->prev = nullptr;
-        cur->next = nullptr;
+        //cur->next = nullptr;
         delete cur;
         return;
     }
     cur->prev->next = cur->next;
-    cur->next->prev = cur->prev;
-    if(cur->next == nullptr) tail = cur->prev;
+    if(cur->next != nullptr)
+        cur->next->prev = cur->prev;
+    else {
+        tail = cur->prev;
+    }
     delete cur;
 }
 void swp(Node* a, Node* b) {
@@ -63,8 +66,11 @@ void swp(Node* a, Node* b) {
 int main() {
     int n, m;
     int Case = 1;
-    while(scanf("%d %d", &n, &m)) {
+    while(scanf("%d", &n) != EOF) {
+        scanf("%d", &m);
         root = build(n);
+        //for(Node* i = root; i != nullptr; i = i->next) printf("%d ", i->data);
+        //printf("\n");
         while(m--) {
             int kind; scanf("%d", &kind);
             int x, y;
@@ -86,8 +92,10 @@ int main() {
                     cat(idxY->prev, x);
                 }
                 else {
+                    //printf("here\n");
                     rm(idxX);
                     Node* xNode = new Node();
+                    root = xNode;
                     xNode->data = x;
                     idxY->prev = xNode;
                     xNode->next = idxY;
@@ -100,9 +108,10 @@ int main() {
                     if(i->data == y) idxY = i;
                     //nodeCnt++;
                 }
-                if(idxY->next == idxX) continue;
+                if(idxY->next == idxX) {continue;}
                 cat(idxY, x);
                 rm(idxX);
+                //printf("root=%d\n", root->data);
             }
             else if(kind == 3) {
                 //int nodeCnt = 1;
@@ -116,13 +125,18 @@ int main() {
             }
             else {
                 Node *l = root, *r = tail;
+                //printf("l=%d r=%d\n", l->data, r->data);
                 for(; l != r && l->next != r; l = l->next, r = r->prev) {
                     //printf("swap %d %d\n", l->data, r->data);
                     int tmp = l->data;
                     l->data = r->data;
                     r->data = tmp;
                 }
-                std::swap(l->data, r->data);
+                //printf("end\n");
+                int tt = l->data;
+                l->data = r->data;
+                r->data = tt;
+                //printf("access\n");
             }
             //for(Node* i = root; i != nullptr; i = i->next) printf("%d ", i->data);
             //printf("\n");
